@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+</head>
+	<body>
+	<title>Using OpenAI in HTML</title>
+	<div class="header">
+		<h1>A Super Basic AI Page</h1>
+	</div>
+	<center>
+	<h1>Enter Your Prompt Here:</h1>
+	<textarea id="prompt" class="promptText-Box"></textarea>
+	<script>
+		var open_ai_response;
+		async function generateText(){
+			const theButton = document.querySelector(".generateText-Button");
+			theButton.addEventListener("click", () => {
+				theButton.classList.add("button--loading");
+			});
+			var url = "https://api.openai.com/v1/engines/text-davinci-002/completions";
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", url);
+
+			xhr.setRequestHeader("Content-Type", "application/json");
+			xhr.setRequestHeader("Authorization", "Bearer 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");
+			var answer = document.getElementById("generatedText");
+			xhr.onreadystatechange = function () {
+			
+				if (xhr.readyState === 4) {
+					console.log(`Requested Data From OpenAI. Status Code: ${xhr.status}`);
+					open_ai_response = JSON.parse(xhr.responseText);
+					answer.value = open_ai_response['choices'][0]['text'].substring(2);
+					theButton.classList.remove("button--loading");
+				}
+					
+				};
+			var prompt = document.getElementById("prompt").value;
+			var data = `{
+		"prompt": "${prompt}",
+    "temperature": 0.7,
+    "max_tokens": 3000,
+    "top_p": 1,
+    "frequency_penalty": 0.75,
+    "presence_penalty": 0
+		}`;
+			xhr.send(data);
+			
+		}
+        </script>
+    <h2>Generated Text From OpenAI</h2>
+
+    <textarea id="generatedText" class="generatedText-Box"></textarea>
+	<div class="btn">
+    <button onclick="generateText();" class="generateText-Button"><span class="btn-text">Generate Text</span></button>
+		<label class="myLabel">
+			<div class="tag">?</div>
+		</label>
+	</div>
+	</center>
+		
+</body>
+</html>
